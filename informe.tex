@@ -1,0 +1,147 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage[dvipsnames,table,xcdraw]{xcolor}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{rotating}
+\usepackage{subcaption}
+\usepackage{wrapfig}
+\usepackage{lscape}
+\usepackage{rotating}
+\usepackage[spanish]{babel}
+\usepackage{pgfplots}
+\usepackage[section]{placeins}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage[font=scriptsize,labelfont=bf]{caption}
+\usepackage{anysize}
+\marginsize{3cm}{3cm}{2.5cm}{2.5cm}
+\providecommand{\abs}[1]{\lvert#1\rvert}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+\renewcommand{\thesubsection}{\thesection.\alph{subsection}}
+\author{Emanuel Alfredo Cortez Médici}
+\title{Trabajo Práctico 1}
+\DeclareGraphicsExtensions{.jpg,.png}
+\usepackage{float}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+%\lhead[\leftmark]{\leftmark}
+\rhead[\thepage]{\thepage}
+\usepackage[cache=false]{minted}
+\usemintedstyle{vim}
+\usepackage{pifont}
+\newcommand{\tickNo}{\hspace{1pt}\ding{55}}
+
+\usepackage{soul}
+\setstcolor{red}
+\setulcolor{red}
+
+
+\begin{document}
+	\begin{titlepage}
+	\centering
+	
+	\includegraphics[width=0.1\textwidth]{fotos_ema/unsl} 
+	
+	{\scshape\LARGE Universidad Nacional de San Luis\par}
+	{\scshape Facultad de Ciencias Físico Matemáticas y Naturales.\par}
+	{\scshape Ingeniería Electrónica con O.S.D.\par}
+	\vspace{1.5cm}
+	{\scshape\Large Procesamiento digital de señales II \par}
+	\vspace{1.5cm}
+	{\huge\bfseries Trabajo Final
+
+	Detección, clasificación y medición de grietas presentes en calles
+	de asfalto
+	\par}
+	\vspace{2cm}
+	Alumno\par
+	{\Large\itshape Cortez Médici Emanuel Alfredo\par}
+	\vfill
+	Profesores Responsables\par
+	Ing. Ricardo ~\textsc{Petrino}\\
+	Ing. Jesus ~\textsc{García}
+	
+	\vfill
+
+% Bottom of the page
+	{\large \today\par}
+\end{titlepage}
+
+\newpage
+
+\section{Objetivo}
+El objetivo del proyecto es presentar un trabajo final integrador individual que estará orientado a la solución de un problema de procesamiento de imágenes y/o visión artificial, aplicando los conceptos y herramientas adquiridos durante la cursada de dicha materia.
+
+El proyecto elegido consiste en detectar, clasificar y medir grietas presentes en calles de asfalto a través de un video realizado con la cámara de un celular.
+
+\section{Introducción}
+
+Las carreteras son infraestructuras importantes que presentan deformaciones debido a su uso constante. 
+Estas deformaciones, aparecen generalmente en forma de grietas en la superficie del pavimento, las cuales comprometen el comportamiento de la ruta, e implican reducción en la eficiencia del transporte, mala calidad del servicio, ponen en riesgo la seguridad de los conductores y restringen el acceso a áreas remotas. 
+Para evitar tales problemas, se requieren buenas políticas de mantenimiento, confiando en el establecimiento de una adecuada gestión de procesos de reparación.
+Las inspecciones viales proporcionan las herramientas necesarias para la recopilación de datos sobre el estado de la superficie del pavimento. 
+
+El problema tratado en este informe es el de la segmentación de fisuras en imágenes de carreteras. Por definición, una grieta es una línea de ruptura que aparece en la superficie del pavimento. En el contexto del procesamiento de imágenes, una grieta es definida como un conjunto de píxeles que son más oscuros que el fondo. Otra definicion que se utiliza a menudo es que la grieta es un conjunto de pequeños segmentos conectados que posiblemente tengan diferentes orientaciones.
+Principalmente, la existencia de grietas en la superficie de la carretera se debe a las condiciones condiciones climáticas y tráfico de vehículos pesados. Este tipo de degradación constituye uno de los indicadores del estado de salud y la evolución de la estructura del pavimento. 
+La detección eficaz de fisuras permitirá evaluar el estado de los pavimentos y programar operaciones de mantenimiento. 
+El trabajo de detección de grietas se realiza visualmente por agentes especializados. 
+El primer paso en su trabajo es adquirir un video de la superficie de la carretera cuando se viaja con un vehículo a baja velocidad. 
+El segundo paso consiste en la entrada de información sobre daños en una estación dedicada. 
+Es un trabajo tedioso que pone en peligro la seguridad de los agentes y usuarios de la vía y que da resultados que no son del todo fiables, ya que depende del inspector. Además, se tiene un problema de reproducibilidad debido a la variabilidad de las condiciones naturales de observación.
+
+Debido a estas limitaciones, algunas investigaciones se han dirigido a la automatización de este trabajo para ayudar a los agentes relevar los defectos desde la comodidad de una oficina. Esta transición requiere la implementación de los métodos de procesamiento automático de las imágenes de carreteras.
+Esta tarea de automatización es una tarea muy difícil porque es un problema de extracción de objetos finos en un fondo con textura muy ruidosa. La dificultad de distinguir las grietas proviene del hecho que la granularidad de la textura en la imagen de la carretera puede corresponder a la anchura de las grietas y las intensidades de algunos píxeles de la grieta corresponden a las intensidades presentes en la superficie de la carretera. 
+Además, el recubrimiento de la superficie de la carretera, la iluminación no constante, objetos que pueden estar presentes y las marcas viales hacen de esta una tarea delicada.
+
+
+\section{Tipos de grietas}
+
+Las grietas o fisuras pueden clasificarse en 3 tipos:
+
+\begin{itemize}
+	\item \textbf{Grietas longitudinales:} Las fisuras longitudinales son un tipo de fracturamiento que se extiende a través de la superficie del pavimento	paralelamente al eje de la calzada. 
+	Pueden localizarse en las huellas de canalización del tránsito, próximos a los bordes en el eje o en correspondencia con los anchos de distribución de las mezclas asfálticas; con frecuencia su ubicación es indicativa de la causa o	mecanismo más probable que la original, y por ende debe ser tenida en cuenta durante la evaluación. 
+	En sus instancias iniciales suele presentarse como una fisura simple, pero a medida que avanza el deterioro del pavimento, desarrolla ramificaciones laterales y fisuras paralelas.
+	\item \textbf{Grietas transversales:} Las fisuras transversales son un fracturamiento rectilíneo que se extiende a través de la superficie del pavimento perpendicularmente al eje de la calzada. Puede afectar todo el  carril  o  ancho  de  calzada  como  limitarse  a  los  0.60m  próximos  al borde. A veces las fisuras transversales se distribuyen a intervalos más o  menos  regulares,  con  espaciamiento  variables  entre  5  y  20m.  Al igual que las fisuras longitudinales puede desarrollar ramificaciones y fisuras paralela
+	\item \textbf{Grietas cocodrilo:}La  piel  de  cocodrilo  o  agrietamiento  por  fatiga  se refiere  a  una  serie  de  fisuras interconectadas causadas por acción de la fatiga de la superficie de pavimento asfáltico sometida a repeticiones de carga o tráfico. El agrietamiento se origina en la base de la superficie de concreto asfaltico, o base estabilizada, donde los valores de esfuerzos de tensión y las deformaciones unitarias son más altos, bajo la carga de rueda. Inicialmente, las  fisuras  se  propagan  hacia  la  superficie  como  una  serie  de  fisuras  longitudinales  en paralelo. Después de repetidas cargas de tráfico, las fisuras se conectan formando varios fragmentos cuyos bordes exteriores forman ángulos agudos en su interior desarrollando así un patrón semejante al alambrado de un gallinero o la piel de un cocodrilo. La piel de cocodrilo ocurre sólo en áreas sujetas a repeticiones de carga de tráfico, tales como son las huellas en el carril. 
+\end{itemize}
+
+
+
+\subsection{Métodos de inspección utilizados}
+
+
+
+\section{Solución propuesta}
+
+La solución propuesta presenta 3 etapas:
+
+\subsection{Detección y clasificación de la grieta}
+
+Debido a las distintas formas que presentan las fisuras, así como posibles elementos externos que se asemejan a una grieta, tales como manchas, sombras y objetos externos, es que se optó por utilizar un algoritmo que aprovecha las bondades de las redes neuronales para la detección de grietas, las cuales fueron entrenadas con una base de datos propia. Para la clasificación
+
+\subsection{Distinción y marcación de la grieta}
+
+
+
+\subsection{Medición del ancho y del largo de la grieta}
+
+\section{Implementación}
+
+
+\subsection{Fallas y posibles mejoras}
+
+
+
+\section{Anexos}
+\subsection{Código}
+
+\section{Bibliografía}
+
+\end{document}
